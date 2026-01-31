@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notifier</string>
+    <string name="forecast_label">Temperature forecast for Oulu, Finland tonight at 6pm:</string>
+    <string name="loading">Loading…</string>
+    <string name="error">Failed to load forecast</string>
+</resources>
