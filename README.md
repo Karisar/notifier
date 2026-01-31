@@ -31,6 +31,20 @@ The project includes a [GitHub Actions workflow](.github/workflows/build-android
 
 1. **Builds the APK** on push or manual trigger
 2. **Publishes to GitHub Releases** when you push a tag
+3. **Sends an email notification** when a new APK is published (on tag push)
+
+### Email notification
+
+When you push a tag, the workflow sends an email with the release link and API URL. Add these [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) to your repository:
+
+| Secret | Description |
+|--------|-------------|
+| `MAIL_FROM` | Sender email address |
+| `MAIL_TO` | Recipient email address |
+| `SMTP_HOST` | SMTP server (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | SMTP port (e.g. `587` for TLS) |
+| `SMTP_USERNAME` | SMTP username |
+| `SMTP_PASSWORD` | SMTP password (use an [App Password](https://support.google.com/accounts/answer/185833) for Gmail) |
 
 ### How to publish
 

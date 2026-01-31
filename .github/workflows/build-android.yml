@@ -55,3 +55,22 @@ jobs:
           draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send email notification (on tag release)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_HOST }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "Notifier APK v${{ steps.version.outputs.version }} published"
+          body: |
+            A new version of the Notifier app has been published.
+
+            Version: ${{ steps.version.outputs.version }}
+            Download: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+            API URL: https://api.open-meteo.com/v1/forecast?latitude=65.0124&longitude=25.4682&hourly=temperature_2m&timezone=Europe/Helsinki
+
+          to: ${{ secrets.MAIL_TO }}
+          from: ${{ secrets.MAIL_FROM }}
