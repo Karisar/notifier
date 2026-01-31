@@ -2,9 +2,11 @@ name: Build and Release Android APK
 
 on:
   push:
+    branches:
+      - main  # Build and release on every push to main
     tags:
-      - 'v*'  # Triggers on tags like v1.0.0, v1.0.1, etc.
-  workflow_dispatch:  # Allows manual trigger from GitHub Actions tab
+      - 'v*'  # Also on tags like v1.0.0
+  workflow_dispatch:  # Manual trigger from GitHub Actions tab
 
 jobs:
   build:
@@ -13,6 +15,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set release tag
+        id: tag
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=release-${{ github.run_id }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -46,30 +57,31 @@ jobs:
           name: notifier-${{ steps.version.outputs.version }}
           path: notifier-${{ steps.version.outputs.version }}.apk
 
-      - name: Create GitHub Release (on tag)
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: notifier-${{ steps.version.outputs.version }}.apk
           generate_release_notes: true
           draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Send email notification (on tag release)
-        if: startsWith(github.ref, 'refs/tags/')
+      - name: Send email notification
+        continue-on-error: true  # Don't fail workflow if email secrets aren't configured
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: ${{ secrets.SMTP_HOST }}
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "Notifier APK v${{ steps.version.outputs.version }} published"
+          subject: "Notifier APK ${{ steps.tag.outputs.tag }} published"
           body: |
             A new version of the Notifier app has been published.
 
-            Version: ${{ steps.version.outputs.version }}
-            Download: https://github.com/${{ github.repository }}/releases/tag/${{ github.ref_name }}
+            App version: ${{ steps.version.outputs.version }}
+            Release: ${{ steps.tag.outputs.tag }}
+            Download: https://github.com/${{ github.repository }}/releases/tag/${{ steps.tag.outputs.tag }}
             API URL: https://api.open-meteo.com/v1/forecast?latitude=65.0124&longitude=25.4682&hourly=temperature_2m&timezone=Europe/Helsinki
 
           to: ${{ secrets.MAIL_TO }}

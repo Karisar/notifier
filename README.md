@@ -29,9 +29,9 @@ The output APK will be in:
 
 The project includes a [GitHub Actions workflow](.github/workflows/build-android.yml) that:
 
-1. **Builds the APK** on push or manual trigger
-2. **Publishes to GitHub Releases** when you push a tag
-3. **Sends an email notification** when a new APK is published (on tag push)
+1. **Builds the APK** on every push to main, tag push, or manual trigger
+2. **Publishes to GitHub Releases** on every push (new release per push)
+3. **Sends an email notification** when a new APK is published
 
 ### Email notification
 
@@ -48,15 +48,15 @@ When you push a tag, the workflow sends an email with the release link and API U
 
 ### How to publish
 
-1. **Push a tag** to trigger a release:
+1. **Push to main** – every push builds and creates a new release (tag: `release-{run_id}`)
+2. **Push a version tag** for a named release:
    ```bash
    git tag v1.0.0
    git push origin v1.0.0
    ```
+3. **Trigger manually**: Repo → Actions → "Build and Release Android APK" → Run workflow
 
-2. Or **trigger manually**: Go to your repo → Actions → "Build and Release Android APK" → Run workflow
-
-The APK will appear in the workflow artifacts and, on tag push, in [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
+The APK appears in workflow artifacts and [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 
 ## Project Structure
 
