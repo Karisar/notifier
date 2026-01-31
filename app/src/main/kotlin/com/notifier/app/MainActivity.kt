@@ -20,6 +20,28 @@ class MainActivity : AppCompatActivity() {
 
         binding.helloText.text = "Hello World"
         loadForecast()
+        loadBitcoinPrice()
+    }
+
+    private fun loadBitcoinPrice() {
+        lifecycleScope.launch {
+            binding.bitcoinPriceText.text = getString(R.string.loading)
+            binding.xrpPriceText.text = getString(R.string.loading)
+            binding.solanaPriceText.text = getString(R.string.loading)
+            try {
+                val prices = withContext(Dispatchers.IO) {
+                    CryptoService.getPricesInEur()
+                }
+                binding.bitcoinPriceText.text = prices.bitcoin?.eur?.let { "€ %.2f".format(it) } ?: getString(R.string.error)
+                binding.xrpPriceText.text = prices.ripple?.eur?.let { "€ %.4f".format(it) } ?: getString(R.string.error)
+                binding.solanaPriceText.text = prices.solana?.eur?.let { "€ %.2f".format(it) } ?: getString(R.string.error)
+            } catch (e: Exception) {
+                binding.bitcoinPriceText.text = getString(R.string.error)
+                binding.xrpPriceText.text = getString(R.string.error)
+                binding.solanaPriceText.text = getString(R.string.error)
+                Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun loadForecast() {

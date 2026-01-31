@@ -12,3 +12,5 @@
 # Gson
 -keep class com.notifier.app.WeatherResponse { *; }
 -keep class com.notifier.app.HourlyData { *; }
+-keep class com.notifier.app.CryptoPriceResponse { *; }
+-keep class com.notifier.app.CryptoPrice { *; }

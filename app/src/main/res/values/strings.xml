@@ -4,4 +4,7 @@
     <string name="forecast_label">Temperature forecast for Oulu, Finland tonight at 6pm:</string>
     <string name="loading">Loading…</string>
     <string name="error">Failed to load forecast</string>
+    <string name="bitcoin_table_title">Crypto Prices</string>
+    <string name="bitcoin_currency">Currency</string>
+    <string name="bitcoin_price">Price (EUR)</string>
 </resources>
